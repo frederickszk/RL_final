@@ -13,13 +13,15 @@
 # env.render()
 
 
+from gym_wrappers import MainGymWrapper
 import gym
 
 env = gym.make('BreakoutNoFrameskip-v4', render_mode='human')
-obs_current = env.reset()
-env.step(0)
+env = MainGymWrapper.wrap(env)
 
-action = env.action_space.sample()
+obs_current = env.reset()
+action = 1
+# action = env.action_space.sample()
 next_state, reward, terminal, info = env.step(action)
 
 # for e in range(max_episode):
