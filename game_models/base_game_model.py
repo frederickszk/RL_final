@@ -1,6 +1,5 @@
 import datetime
-# from game_models.logger import Logger
-from logger import Logger
+from game_models.logger import Logger
 
 
 class BaseGameModel:
@@ -21,7 +20,7 @@ class BaseGameModel:
     def move(self, state):
         pass
 
-    def remember(self, state, action, reward, next_state, done):
+    def remember(self, state, action, next_state, reward):
         pass
 
     def step_update(self, total_step):

@@ -7,7 +7,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-TRAINING_UPDATE_FREQUENCY = 1000
+# TRAINING_UPDATE_FREQUENCY = 1000
+TRAINING_UPDATE_FREQUENCY = 4
 RUN_UPDATE_FREQUENCY = 10
 MAX_LOSS = 5
 
@@ -78,6 +79,7 @@ class Stat:
         with open(input_path, "r") as scores:
             reader = csv.reader(scores)
             data = list(reader)
+            # print("The data", data)
             for i in range(0, len(data)):
                 x.append(float(i)*small_batch_length)
                 y.append(float(data[i][0]))
@@ -117,9 +119,9 @@ class Stat:
 
     def _save_csv(self, path, score):
         if not os.path.exists(path):
-            with open(path, "w"):
+            with open(path, "w", newline=''):
                 pass
-        scores_file = open(path, "a")
+        scores_file = open(path, "a", newline='')
         with scores_file:
             writer = csv.writer(scores_file)
             writer.writerow([score])

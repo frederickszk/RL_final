@@ -5,9 +5,15 @@ import torch.nn.functional as F
 
 
 class DQN(nn.Module):
-    def __init__(self, h, w, outputs):
+    def __init__(self, input_shape, outputs):
+        """
+        :param input_shape: (tuple, [3,]) frames x width x height.
+        :param outputs: (int) the capacity of the action space.
+        """
         super(DQN, self).__init__()
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=5, stride=2)
+        assert len(input_shape) == 3
+        frame, width, height = input_shape
+        self.conv1 = nn.Conv2d(frame, 16, kernel_size=5, stride=2)
         self.bn1 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2)
         self.bn2 = nn.BatchNorm2d(32)
@@ -19,8 +25,8 @@ class DQN(nn.Module):
         def conv2d_size_out(size, kernel_size=5, stride=2):
             return (size - (kernel_size - 1) - 1) // stride + 1
 
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(w)))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(h)))
+        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(width)))
+        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(height)))
         linear_input_size = convw * convh * 32
         self.head = nn.Linear(linear_input_size, outputs)
 
