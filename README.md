@@ -19,12 +19,15 @@ pip install gym[accept-rom-license]
 
 # Utils
 
-Check the action list (may be useful for testing the game)
+- Check the action list (may be useful for testing the game)
 
 ```python
 env.unwrapped.get_action_meanings()
 ```
 
+- Resolve the package import error in the same folder (Pycharm)
+
+> Right click the folder -> Mark Directory as -> Source Root
 
 # Reference
 - [Gsurma's repo](https://github.com/gsurma/atari)
