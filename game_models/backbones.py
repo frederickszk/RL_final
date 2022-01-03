@@ -36,23 +36,31 @@ class DQN(nn.Module):
         # -------------------------------------------------------------------- #
         # Settings from Gsurma's implementation
         self.conv1 = nn.Conv2d(frame, 32, kernel_size=8, stride=4)
-        self.bn1 = nn.BatchNorm2d(32)
+        # self.bn1 = nn.BatchNorm2d(32)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2)
-        self.bn2 = nn.BatchNorm2d(64)
+        # self.bn2 = nn.BatchNorm2d(64)
         self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
-        self.bn3 = nn.BatchNorm2d(64)
+        # self.bn3 = nn.BatchNorm2d(64)
 
         convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(width, 8, 4), 4, 2), 3, 1)
         convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(height, 8, 4), 4, 2), 3, 1)
         linear_input_size = convw * convh * 64
 
-        self.head = nn.Linear(linear_input_size, outputs)
+        self.head_inter = nn.Linear(linear_input_size, 512)
+        self.head_output = nn.Linear(512, outputs)
 
     # Called with either one element to determine next action, or a batch
     # during optimization. Returns tensor([[left0exp,right0exp]...]).
     def forward(self, x):
-        # x = x.to(device)
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = F.relu(self.bn2(self.conv2(x)))
-        x = F.relu(self.bn3(self.conv3(x)))
-        return self.head(x.view(x.size(0), -1))
+        # ----------------------------------- #
+        # Settings from Pytorch tutorial
+        # x = F.relu(self.bn1(self.conv1(x)))
+        # x = F.relu(self.bn2(self.conv2(x)))
+        # x = F.relu(self.bn3(self.conv3(x)))
+        # return self.head(x.view(x.size(0), -1))
+
+        # ----------------------------------- #
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        return self.head_output(self.head_inter(x.view(x.size(0), -1)))

@@ -15,8 +15,12 @@ INPUT_SHAPE = (FRAMES_IN_OBSERVATION, FRAME_SIZE, FRAME_SIZE)
 class Atari:
 
     def __init__(self):
-        game_name, game_mode, total_step_limit, total_run_limit, clip = self._args()
-        env = gym.make(game_name, render_mode='human')
+        game_name, game_mode, render, total_step_limit, total_run_limit, clip = self._args()
+        print(render)
+        if render:
+            env = gym.make(game_name, render_mode='human')
+        else:
+            env = gym.make(game_name)
         env = MainGymWrapper.wrap(env)
 
         # Setting the device
@@ -24,6 +28,7 @@ class Atari:
         print("[Main Loop] Using device", device)
 
         game_model = self._game_model(game_mode, game_name, env.action_space.n, device)
+        game_model.show_info()
 
         self._main_loop(game_model, env, total_step_limit, total_run_limit, clip)
 
@@ -72,6 +77,8 @@ class Atari:
         parser.add_argument("-m", "--mode",
                             help="Choose from available modes: dqn_train, dqn_test, Default is 'dqn_training'.",
                             default="dqn_training")
+        parser.add_argument("-r", "--render", help="Choose if the game should be rendered. Default is 'False'.",
+                            action='store_true')
         parser.add_argument("-tsl", "--total_step_limit",
                             help="Set how many steps in one episode . Default is '5000000'.", default=5000000, type=int)
         parser.add_argument("-trl", "--total_run_limit",
@@ -83,6 +90,7 @@ class Atari:
         args = parser.parse_args()
         game_mode = args.mode
         game_name = args.game
+        render = args.render
         total_step_limit = args.total_step_limit
         total_run_limit = args.total_run_limit
         clip = args.clip
@@ -91,7 +99,7 @@ class Atari:
         print("Should clip: " + str(clip))
         print("Total steps per episode: " + str(total_step_limit))
         print("Total episodes: " + str(total_run_limit))
-        return game_name, game_mode, total_step_limit, total_run_limit, clip
+        return game_name, game_mode, render, total_step_limit, total_run_limit, clip
 
     def _game_model(self, game_mode, game_name, action_space, device):
         if game_mode == "dqn_training":
@@ -104,5 +112,4 @@ class Atari:
 
 
 if __name__ == "__main__":
-
     Atari()

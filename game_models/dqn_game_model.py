@@ -15,19 +15,19 @@ Transition = namedtuple('Transition',
 
 GAMMA = 0.99
 # MEMORY_SIZE = 900000
-MEMORY_SIZE = 30000
+MEMORY_SIZE = 200000
 BATCH_SIZE = 32
 TRAINING_FREQUENCY = 4
-TARGET_NETWORK_UPDATE_FREQUENCY = 10000
-MODEL_PERSISTENCE_UPDATE_FREQUENCY = 5000
+TARGET_NETWORK_UPDATE_FREQUENCY = 16000
+MODEL_PERSISTENCE_UPDATE_FREQUENCY = 4000
 # REPLAY_START_SIZE = 50000
-REPLAY_START_SIZE = 15000
+REPLAY_START_SIZE = 50000
 
 EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.1
 EXPLORATION_TEST = 0.02
 # EXPLORATION_STEPS = 850000
-EXPLORATION_STEPS = 60000
+EXPLORATION_STEPS = 350000
 EXPLORATION_DECAY = (EXPLORATION_MAX-EXPLORATION_MIN)/EXPLORATION_STEPS
 
 
@@ -118,6 +118,13 @@ class DQNTrainer(DQNGameModel):
         self.memory = ReplayMemory(MEMORY_SIZE)
 
         self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025, eps=0.01)
+
+    def show_info(self):
+        print("Memory size: ", MEMORY_SIZE)
+        print("Replay start: ", REPLAY_START_SIZE)
+        print("Exploration steps: ", EXPLORATION_STEPS)
+        print("Policy network save frequency: ", MODEL_PERSISTENCE_UPDATE_FREQUENCY)
+        print("Target network update frequency: ", TARGET_NETWORK_UPDATE_FREQUENCY)
 
     def move(self, state):
         # e-greedy

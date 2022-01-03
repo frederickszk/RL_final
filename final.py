@@ -40,7 +40,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 For testing the environment and "State" structure
 """
 game_name = 'BreakoutNoFrameskip-v4'
-env = gym.make(game_name, render_mode='human')
+# env = gym.make(game_name, render_mode='human')
+env = gym.make(game_name)
 env = MainGymWrapper.wrap(env)
 
 current_state = env.reset()

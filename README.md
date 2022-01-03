@@ -27,6 +27,11 @@ conda install pytorch torchvision torchaudio cudatoolkit=xxx -c pytorch
 pip install opencv-python
 ```
 
+- Matplotlib
+```shell
+conda install matplotlib
+```
+
 # Utils
 
 - Check the action list (may be useful for testing the game)
