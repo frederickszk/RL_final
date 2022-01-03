@@ -55,27 +55,27 @@ For testing the DQN module
 """
 #
 policy_net = DQN((4, 84, 84), 4).to(device)
-# test_input = torch.tensor(np.concatenate(next_state._frames))
-# test_input = torch.unsqueeze(test_input, dim=0).float().to(device)
-#
-# # test_output = policy_net(test_input)
-# with torch.no_grad():
-#     test_output = policy_net(test_input)
+test_input = torch.tensor(np.concatenate(next_state._frames))
+test_input = torch.unsqueeze(test_input, dim=0).float().to(device)
+
+# test_output = policy_net(test_input)
+with torch.no_grad():
+    test_output = policy_net(test_input)
 
 
 # ---------------------------------------------------------------------------------- #
 """
 For testing the dqn_game_model
 """
-from collections import namedtuple
-Transition = namedtuple('Transition',
-                        ('current_state', 'action', 'next_state', 'reward'))
-
-game_model = DQNTrainer(game_name, INPUT_SHAPE, env.action_space.n, device)
-for i in range(32):
-    game_model.remember(current_state, action, next_state, reward)
-
-loss, max_q = game_model._train()
+# from collections import namedtuple
+# Transition = namedtuple('Transition',
+#                         ('current_state', 'action', 'next_state', 'reward'))
+#
+# game_model = DQNTrainer(game_name, INPUT_SHAPE, env.action_space.n, device)
+# for i in range(32):
+#     game_model.remember(current_state, action, next_state, reward)
+#
+# loss, max_q = game_model._train()
 
 
 

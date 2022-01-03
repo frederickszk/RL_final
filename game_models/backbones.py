@@ -12,22 +12,40 @@ class DQN(nn.Module):
         """
         super(DQN, self).__init__()
         assert len(input_shape) == 3
-        frame, width, height = input_shape
-        self.conv1 = nn.Conv2d(frame, 16, kernel_size=5, stride=2)
-        self.bn1 = nn.BatchNorm2d(16)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2)
-        self.bn2 = nn.BatchNorm2d(32)
-        self.conv3 = nn.Conv2d(32, 32, kernel_size=5, stride=2)
-        self.bn3 = nn.BatchNorm2d(32)
 
         # Number of Linear input connections depends on output of conv2d layers
         # and therefore the input image size, so compute it.
+
         def conv2d_size_out(size, kernel_size=5, stride=2):
             return (size - (kernel_size - 1) - 1) // stride + 1
+        frame, width, height = input_shape
 
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(width)))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(height)))
-        linear_input_size = convw * convh * 32
+        # ------------------------------------------------------------------- #
+        # Original settings from Pytorch official tutorial
+        # self.conv1 = nn.Conv2d(frame, 16, kernel_size=5, stride=2)
+        # self.bn1 = nn.BatchNorm2d(16)
+        # self.conv2 = nn.Conv2d(16, 32, kernel_size=5, stride=2)
+        # self.bn2 = nn.BatchNorm2d(32)
+        # self.conv3 = nn.Conv2d(32, 32, kernel_size=5, stride=2)
+        # self.bn3 = nn.BatchNorm2d(32)
+
+        # convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(width)))
+        # convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(height)))
+        # linear_input_size = convw * convh * 32
+
+        # -------------------------------------------------------------------- #
+        # Settings from Gsurma's implementation
+        self.conv1 = nn.Conv2d(frame, 32, kernel_size=8, stride=4)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=4, stride=2)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
+        self.bn3 = nn.BatchNorm2d(64)
+
+        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(width, 8, 4), 4, 2), 3, 1)
+        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(height, 8, 4), 4, 2), 3, 1)
+        linear_input_size = convw * convh * 64
+
         self.head = nn.Linear(linear_input_size, outputs)
 
     # Called with either one element to determine next action, or a batch

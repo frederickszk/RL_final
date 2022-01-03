@@ -6,7 +6,7 @@ The final project of reinforcement learning (CS7309)
 - [x] Prepare the gym-atari environment
 - [ ] Implement the DQN algorithm
     - [ ] Re-implement the network with PyTorch
-- [ ] Implement the DDQN (Double DQN)
+
 
 
 # Environment Preparation
@@ -15,6 +15,16 @@ The final project of reinforcement learning (CS7309)
 ```shell script
 pip install gym[atari]
 pip install gym[accept-rom-license]
+```
+
+- PyTorch
+```shell
+conda install pytorch torchvision torchaudio cudatoolkit=xxx -c pytorch
+```
+
+- OpenCV
+```shell
+pip install opencv-python
 ```
 
 # Utils
