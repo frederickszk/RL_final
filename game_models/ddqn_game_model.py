@@ -15,12 +15,12 @@ Transition = namedtuple('Transition',
 
 GAMMA = 0.99
 # MEMORY_SIZE = 900000
-MEMORY_SIZE = 200000
+MEMORY_SIZE = 250000
 # BATCH_SIZE = 32
 BATCH_SIZE = 32
 TRAINING_FREQUENCY = 4
-TARGET_NETWORK_UPDATE_FREQUENCY = 40000
-MODEL_PERSISTENCE_UPDATE_FREQUENCY = 10000
+TARGET_NETWORK_UPDATE_FREQUENCY = 10000
+MODEL_PERSISTENCE_UPDATE_FREQUENCY = 5000
 # REPLAY_START_SIZE = 50000
 REPLAY_START_SIZE = 50000
 
@@ -28,7 +28,8 @@ EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.1
 EXPLORATION_TEST = 0.02
 # EXPLORATION_STEPS = 850000
-EXPLORATION_STEPS = 350000
+# EXPLORATION_STEPS = 350000
+EXPLORATION_STEPS = 700000
 EXPLORATION_DECAY = (EXPLORATION_MAX-EXPLORATION_MIN)/EXPLORATION_STEPS
 
 
@@ -49,17 +50,17 @@ class DQNGameModel(BaseGameModel):
         torch.save(self.policy_net.state_dict(), self.model_path)
 
 
-class DQNSolver(DQNGameModel):
+class DDQNSolver(DQNGameModel):
 
     def __init__(self, game_name, input_shape, action_space, device):
-        testing_model_path = "./output/weights/" + game_name + "/dqn/testing/model.pth"
+        testing_model_path = "./output/weights/" + game_name + "/ddqn/testing/model.pth"
         assert os.path.exists(os.path.dirname(testing_model_path)), "No testing model in: " + str(testing_model_path)
         DQNGameModel.__init__(self,
                               game_name,
-                              "DQN testing",
+                              "DDQN testing",
                               input_shape,
                               action_space,
-                              "./output/logs/" + game_name + "/dqn/testing/" + self._get_date() + "/",
+                              "./output/logs/" + game_name + "/ddqn/testing/" + self._get_date() + "/",
                               testing_model_path)
 
         self.device = device
@@ -93,16 +94,16 @@ class ReplayMemory(object):
         return len(self.memory)
 
 
-class DQNTrainer(DQNGameModel):
+class DDQNTrainer(DQNGameModel):
 
     def __init__(self, game_name, input_shape, action_space, device):
         DQNGameModel.__init__(self,
                               game_name,
-                              "DQN training",
+                              "DDQN training",
                               input_shape,
                               action_space,
-                              "./output/logs/" + game_name + "/dqn/training/" + self._get_date() + "/",
-                              "./output/weights/" + game_name + "/dqn/" + self._get_date() + "/model.pth")
+                              "./output/logs/" + game_name + "/ddqn/training/" + self._get_date() + "/",
+                              "./output/weights/" + game_name + "/ddqn/" + self._get_date() + "/model.pth")
         self.device = device
         if os.path.exists(os.path.dirname(self.model_path)):
             # If exists, remove the directory.
@@ -118,7 +119,8 @@ class DQNTrainer(DQNGameModel):
         self.epsilon = EXPLORATION_MAX
         self.memory = ReplayMemory(MEMORY_SIZE)
 
-        self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025, eps=0.01, weight_decay=0.95)
+        # self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025, eps=0.01, weight_decay=0.95)
+        self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025)
 
     def show_info(self):
         print("Memory size: ", MEMORY_SIZE)
@@ -201,7 +203,12 @@ class DQNTrainer(DQNGameModel):
         # This is merged based on the mask, such that we'll have either the expected
         # state value or 0 in case the state was final.
         next_state_values = torch.zeros(BATCH_SIZE, device=self.device)
-        next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
+
+        # For DDQN
+        # Firstly use policy_net to select the max action: a' = argmax_a Q(s_{t+1}, a)
+        # Then use the target_net to evaluate the state_action value: Q'(s_{t+1}, a')
+        action_policy_batch = self.policy_net(non_final_next_states).max(1)[1].view(-1, 1)
+        next_state_values[non_final_mask] = self.target_net(non_final_next_states).gather(1, action_policy_batch).view(-1,)
 
         # Compute the expected Q values
         expected_state_action_values = (next_state_values * GAMMA) + reward_batch

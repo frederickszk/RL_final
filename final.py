@@ -68,14 +68,14 @@ with torch.no_grad():
 """
 For testing the dqn_game_model
 """
-# from collections import namedtuple
-# Transition = namedtuple('Transition',
-#                         ('current_state', 'action', 'next_state', 'reward'))
-#
-# game_model = DQNTrainer(game_name, INPUT_SHAPE, env.action_space.n, device)
-# for i in range(32):
-#     game_model.remember(current_state, action, next_state, reward)
-#
+from collections import namedtuple
+Transition = namedtuple('Transition',
+                        ('current_state', 'action', 'next_state', 'reward'))
+
+game_model = DQNTrainer(game_name, INPUT_SHAPE, env.action_space.n, device)
+for i in range(32):
+    game_model.remember(current_state, action, next_state, reward)
+
 # loss, max_q = game_model._train()
 
 

@@ -4,8 +4,10 @@ The final project of reinforcement learning (CS7309)
 
 ### TODOs
 - [x] Prepare the gym-atari environment
-- [ ] Implement the DQN algorithm
-    - [ ] Re-implement the network with PyTorch
+- [x] Implement the DQN algorithms
+    - [x] Re-implement the network with PyTorch
+    - [x] Implement the DDQN (Double DQN)
+- [ ] Prepare the MuJuCo environment
 
 
 

@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 # import atari_py
 from game_models.dqn_game_model import DQNTrainer, DQNSolver
-# from game_models.ge_game_model import GETrainer, GESolver
+from game_models.ddqn_game_model import DDQNTrainer, DDQNSolver
 from gym_wrappers import MainGymWrapper
 import torch
 
@@ -75,8 +75,9 @@ class Atari:
         parser = argparse.ArgumentParser()
         parser.add_argument("-g", "--game", help="Default is 'breakout'.", default="BreakoutNoFrameskip-v4")
         parser.add_argument("-m", "--mode",
-                            help="Choose from available modes: dqn_train, dqn_test, Default is 'dqn_training'.",
-                            default="dqn_training")
+                            help="Choose from available modes: dqn_training/testing, ddqn_training/testing. "
+                                 "Default is 'ddqn_training'.",
+                            default="ddqn_training")
         parser.add_argument("-r", "--render", help="Choose if the game should be rendered. Default is 'False'.",
                             action='store_true')
         parser.add_argument("-tsl", "--total_step_limit",
@@ -106,6 +107,10 @@ class Atari:
             return DQNTrainer(game_name, INPUT_SHAPE, action_space, device)
         elif game_mode == "dqn_testing":
             return DQNSolver(game_name, INPUT_SHAPE, action_space, device)
+        elif game_mode == "ddqn_training":
+            return DDQNTrainer(game_name, INPUT_SHAPE, action_space, device)
+        elif game_mode == "ddqn_testing":
+            return DDQNSolver(game_name, INPUT_SHAPE, action_space, device)
         else:
             print("Unrecognized mode. Use --help")
             exit(1)
