@@ -15,21 +15,29 @@ Transition = namedtuple('Transition',
 
 GAMMA = 0.99
 # MEMORY_SIZE = 900000
-MEMORY_SIZE = 250000
-# BATCH_SIZE = 32
+MEMORY_SIZE = 250000  # For server
+# MEMORY_SIZE = 30000  # For local
+
 BATCH_SIZE = 32
 TRAINING_FREQUENCY = 4
+
+
+# TARGET_NETWORK_UPDATE_FREQUENCY = 5000
 TARGET_NETWORK_UPDATE_FREQUENCY = 10000
 MODEL_PERSISTENCE_UPDATE_FREQUENCY = 5000
-# REPLAY_START_SIZE = 50000
-REPLAY_START_SIZE = 50000
+
+REPLAY_START_SIZE = 50000  # For server
+# REPLAY_START_SIZE = 10000  # For Local
 
 EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.1
 EXPLORATION_TEST = 0.02
 # EXPLORATION_STEPS = 850000
-# EXPLORATION_STEPS = 350000
-EXPLORATION_STEPS = 700000
+EXPLORATION_STEPS = 450000
+# EXPLORATION_STEPS = 350000  # For server
+# EXPLORATION_STEPS = 50000  # For local
+
+
 EXPLORATION_DECAY = (EXPLORATION_MAX-EXPLORATION_MIN)/EXPLORATION_STEPS
 
 
@@ -119,8 +127,8 @@ class DDQNTrainer(DQNGameModel):
         self.epsilon = EXPLORATION_MAX
         self.memory = ReplayMemory(MEMORY_SIZE)
 
-        # self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025, eps=0.01, weight_decay=0.95)
-        self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025)
+        self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025, eps=0.01, weight_decay=0.95)
+        # self.optimizer = optim.RMSprop(self.policy_net.parameters(), lr=0.00025)
 
     def show_info(self):
         print("Memory size: ", MEMORY_SIZE)
@@ -216,8 +224,11 @@ class DDQNTrainer(DQNGameModel):
         average_max_q = torch.mean(expected_state_action_values)
 
         # Compute Huber loss
-        criterion = nn.SmoothL1Loss()
-        loss = criterion(state_action_values, expected_state_action_values.unsqueeze(1))
+        # criterion = nn.SmoothL1Loss()
+        # criterion = nn.HuberLoss()
+        criterion = nn.MSELoss()
+        # loss = criterion(state_action_values, expected_state_action_values.unsqueeze(1))
+        loss = criterion(state_action_values.float(), expected_state_action_values.unsqueeze(1).float())
 
         # Optimize the model
         self.optimizer.zero_grad()
