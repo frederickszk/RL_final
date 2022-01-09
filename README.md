@@ -81,3 +81,4 @@ Each observation generate a state:`LazyFrames`, including a list of 4 x [1, 84, 
 # Reference
 - [Gsurma's repo](https://github.com/gsurma/atari)
 - [Pytorch's RL tutorial](https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html)
+- [ikostrikov's repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail)
