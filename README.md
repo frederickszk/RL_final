@@ -77,7 +77,6 @@ env.unwrapped.get_action_meanings()
 Each observation generate a state:`LazyFrames`, including a list of 4 x [1, 84, 84] numpy arrays.
   Use the `np.asarray(state)` can easily convert it to [4, 84, 84] array for further use.
   
-
 # Reference
 - [Gsurma's repo](https://github.com/gsurma/atari)
 - [Pytorch's RL tutorial](https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html)
