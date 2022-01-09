@@ -8,7 +8,7 @@ The final project of reinforcement learning (CS7309)
     - [x] Re-implement the DQN network with PyTorch
     - [x] Implement the DDQN (Double DQN)
 - [x] Prepare the MuJoCo environment
-- [ ] Implement the A2C algorithm
+- [x] Implement the A2C algorithm
 
 
 
